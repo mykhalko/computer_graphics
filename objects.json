@@ -1,0 +1,134 @@
+[
+  {
+    "name": "inner triangle",
+    "center": {
+      "x": 0,
+      "y": 0
+    },
+    "scale": {
+      "value": 2,
+      "name": "triangle_side"
+    },
+    "dots": [
+      {
+        "x": 2,
+        "y": 1.4641016151377544,
+        "connection": {
+          "name": "line"
+        }
+      },
+      {
+        "x": -2,
+        "y": 1.4641016151377544,
+        "connection": {
+          "name": "line"
+        }
+      },
+      {
+        "x": 0,
+        "y": -2,
+        "connection": {
+          "name": "line"
+        }
+      }
+    ]
+  },
+  {
+    "name": "major",
+    "center": {
+      "x": 0,
+      "y": 0
+    },
+    "scale": {
+      "value": 4,
+      "name": "major_radius"
+    },
+    "dots": [
+      {
+        "x": 6.333333,
+        "y": 0,
+        "connection": {
+          "name": "line"
+        }
+      },
+      {
+        "x": 4,
+        "y": 0,
+        "connection": {
+          "name": "circle",
+          "center": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      {
+        "x": -4,
+        "y": 0,
+        "connection": {
+          "name": "line"
+        }
+      },
+      {
+        "x": -4,
+        "y": 5,
+        "connection": {
+          "name": "line"
+        }
+      },
+      {
+        "x": -3,
+        "y": 5,
+        "connection": {
+          "name": "line"
+        }
+      },
+      {
+        "x": -3,
+        "y": 7,
+        "connection": {
+          "name": "line"
+        }
+      },
+      {
+        "x": -5,
+        "y": 7,
+        "connection": {
+          "name": "circle",
+          "center": {
+            "x": -2,
+            "y": 3
+          }
+        }
+      },
+      {
+        "x": -7,
+        "y": 3,
+        "connection": {
+          "name": "line"
+        }
+      },
+      {
+        "x": -7,
+        "y": 1,
+        "connection": {
+          "name": "line"
+        }
+      },
+      {
+        "x": -3,
+        "y": -5,
+        "connection": {
+          "name": "line"
+        }
+      },
+      {
+        "x": 3,
+        "y": -5,
+        "connection": {
+          "name": "line"
+        }
+      }
+    ]
+  }
+]
