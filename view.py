@@ -18,6 +18,8 @@ from PyQt5.QtGui import (
 from PyQt5.QtCore import Qt
 
 from legacy_tools import with_neighbour
+from tools import athens_factory
+from tools import projective_factory
 
 
 class GenericCanvas(QLabel):
@@ -51,10 +53,6 @@ class GenericCanvas(QLabel):
         painter.end()
         self.update()
 
-    def paint_line(self):
-        with self.painting(width=1) as painter:
-            painter.drawLine(0, 0, 499, 499)
-
     def paint_cartesian(self):
         safe_size = self._size - 1
         virtual_cell_size = round(safe_size / self._virtual_size / 2)
@@ -77,6 +75,20 @@ class GenericCanvas(QLabel):
             for start, end in with_neighbour(points):
                 painter.drawLine(start[0], start[1], end[0], end[1])
                 print(f"drawing line for {(start[0], start[1], end[0], end[1])}")
+
+    def int_to_rgba(self, value):
+        return (value >> 16) & 255, (value >> 8) & 255, value & 255, (value >> 24) & 255,
+
+    def draw_color_points(self, color_points):
+        for color, points in color_points.items():
+            with self.painting(color=QColor(*self.int_to_rgba(color))) as painter:
+                for x, y in points:
+                    painter.drawPoint(x, y)
+
+    def get_pixels(self):
+        img = self.pixmap().toImage()
+        size = self._size
+        return [[img.pixel(i, j) for j in range(size)] for i in range(size)]
 
 
 class ControlPanel(QWidget):
@@ -176,7 +188,6 @@ class ControlPanel(QWidget):
         self.layout.addWidget(self.xyyy_widget)
 
         # Xx Yx
-
         self.xxyx_widget = QWidget(self)
         xxyx_row_layout = QHBoxLayout(self.xxyx_widget)
         self.xx_label = QLabel(self.xxyx_widget)
@@ -245,6 +256,9 @@ class ControlPanel(QWidget):
 
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
+        def f(*args):
+            this = self
+            print()
         super().__init__()
         self._model = kwargs.get("model")
         self._canvas = GenericCanvas(*args, **kwargs)
@@ -252,8 +266,8 @@ class MainWindow(QMainWindow):
             *args,
             **kwargs,
             on_redraw=self.redraw,
-            on_athens_transformation=lambda *args: None,
-            on_projective_transformation=lambda *args: None
+            on_athens_transformation=self.athens,
+            on_projective_transformation=self.projective
         )
         self._init_ui()
 
@@ -271,6 +285,26 @@ class MainWindow(QMainWindow):
             self._canvas.paint_cartesian()
             for outline in self._model.outlines:
                 self._canvas.draw_outline(outline)
+
+    def apply_transform(self, transform):
+        color_map = self._canvas.get_pixels()
+        white_color = (255 << 24) | (255 << 16) | (255 << 8) | 255
+        draw_map = {}
+        for i, row in enumerate(color_map):
+            for j, color in enumerate(row):
+                if color != white_color:
+                    draw_map.setdefault(color, [])
+                    draw_map[color].append((i, j))
+        for color, dots in draw_map.items():
+            draw_map[color] = list(map(transform, dots))
+        self._canvas.clear()
+        self._canvas.draw_color_points(draw_map)
+
+    def athens(self, data):
+        self.apply_transform(athens_factory(data))
+
+    def projective(self, data):
+        self.apply_transform(projective_factory(data))
 
 
 @contextmanager

@@ -76,3 +76,35 @@ def coordinates_adapter(real_size, virtual_size):
         real_y = round((real_size - shift_value) - y * virtual_cell_size)
         return real_x, real_y
     return adapter
+
+
+def athens_factory(data):
+    x0, y0 = data["x0"], data["y0"]
+    xy, yy = data["xy"], data["yy"]
+    xx, yx = data["xx"], data["yx"]
+
+    w0, wx, wy = 1000, 1, 2
+
+    def transform(args):
+        x, y = args
+        transformed_x = int((x0 * w0 + xx + wx * x + xy * wy * y) / (w0 + wx * x + wy * y))
+        transformed_y = int((y0 * w0 + yx + wx * x + yy * wy * y) / (w0 + wx * x + wy * y))
+        return transformed_x, transformed_y
+
+    return transform
+
+
+def projective_factory(data):
+    x0, y0 = data["x0"], data["y0"]
+    xy, yy = data["xy"], data["yy"]
+    xx, yx = data["xx"], data["yx"]
+
+    divider = 1000
+
+    def transform(args):
+        x, y = args
+        transformed_x = int((x0 + xx * x + xy * y) / divider)
+        transformed_y = int((y0 + yx * x + yy * y) / divider)
+        return transformed_x, transformed_y
+
+    return transform
